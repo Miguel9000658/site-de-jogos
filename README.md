@@ -3,18 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat com Amigos</title>
+<title>Chat Estilo WhatsApp</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background:#12172a; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; }
-  .chat-container { width: 400px; max-width: 95vw; background:#1f2535; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
-  .messages { flex:1; padding:10px; overflow-y:auto; }
-  .message { margin-bottom:6px; }
-  .message strong { color:#5ef2ff; }
-  .input-area { display:flex; border-top:1px solid #333; }
-  .input-area input { flex:1; padding:10px; border:none; outline:none; background:#2a2f44; color:#fff; }
-  .input-area button { padding:10px 14px; border:none; background:#5ef2ff; color:#000; cursor:pointer; }
+  body { margin:0; font-family: Arial, sans-serif; background:#e5ddd5; display:flex; justify-content:center; align-items:center; height:100vh; }
+  .chat-container { width: 400px; max-width: 95vw; background:#f0f0f0; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+  .messages { flex:1; padding:10px; overflow-y:auto; background:#d6e9ff; }
+  .message { margin-bottom:6px; max-width:75%; padding:8px 12px; border-radius:18px; word-wrap: break-word; }
+  .message.you { background:#25d366; color:#fff; margin-left:auto; border-bottom-right-radius:2px; }
+  .message.friend { background:#fff; color:#000; margin-right:auto; border-bottom-left-radius:2px; }
+  .input-area { display:flex; border-top:1px solid #ccc; background:#f0f0f0; }
+  .input-area input { flex:1; padding:10px; border:none; outline:none; border-radius:0; }
+  .input-area button { padding:10px 14px; border:none; background:#34b7f1; color:#fff; cursor:pointer; font-weight:bold; }
+  #username { padding:10px; border:none; width:120px; }
 </style>
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
@@ -23,12 +24,11 @@
   <div class="messages" id="messages"></div>
   <div class="input-area">
     <input type="text" id="username" placeholder="Seu nome" />
-    <input type="text" id="msg" placeholder="Digite uma mensagem" />
+    <input type="text" id="msg" placeholder="Mensagem" />
     <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
 <script>
-  // Configuração Firebase (substitua pelos seus dados do projeto Firebase)
   const firebaseConfig = {
     apiKey: "SUA_API_KEY",
     authDomain: "SEU_PROJECT_ID.firebaseapp.com",
@@ -41,23 +41,22 @@
 
   const app = firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-
   const messagesDiv = document.getElementById('messages');
 
-  // Enviar mensagem
   function sendMessage() {
     const user = document.getElementById('username').value.trim() || 'Anon';
     const msg = document.getElementById('msg').value.trim();
-    if(msg==='') return;
+    if(!msg) return;
     db.ref('chat').push({username:user, message:msg, timestamp:Date.now()});
     document.getElementById('msg').value='';
   }
 
-  // Ouvir novas mensagens
   db.ref('chat').on('child_added', snapshot => {
     const data = snapshot.val();
     const div = document.createElement('div');
     div.classList.add('message');
+    if(data.username === document.getElementById('username').value.trim()) div.classList.add('you');
+    else div.classList.add('friend');
     div.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
     messagesDiv.appendChild(div);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
