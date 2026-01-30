@@ -3,34 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Classroom Chat</title>
+<title>Classroom Chat</title>
 <style>
   body { margin:0; font-family: Arial, sans-serif; background:#e5ddd5; display:flex; justify-content:center; align-items:center; height:100vh; }
-  .chat-container { width: 400px; max-width: 95vw; background:#f0f0f0; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
-  .messages { flex:1; padding:10px; overflow-y:auto; background:#d6e9ff; }
+  .chat-container { width: 450px; max-width: 95vw; background:#f0f0f0; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.2); }
+  .messages { flex:1; padding:10px; overflow-y:auto; background:#d6e9ff; min-height:200px; }
   .message { margin-bottom:6px; max-width:75%; padding:8px 12px; border-radius:18px; word-wrap: break-word; }
   .message.you { background:#25d366; color:#fff; margin-left:auto; border-bottom-right-radius:2px; }
   .message.friend { background:#fff; color:#000; margin-right:auto; border-bottom-left-radius:2px; }
   .input-area { display:flex; border-top:1px solid #ccc; background:#f0f0f0; }
   .input-area input { flex:1; padding:10px; border:none; outline:none; border-radius:0; }
   .input-area button { padding:10px 14px; border:none; background:#34b7f1; color:#fff; cursor:pointer; font-weight:bold; }
-  #username, #room { padding:10px; border:none; width:120px; margin-right:4px; }
+  .top-controls { display:flex; gap:4px; padding:8px; background:#d0e0ff; }
+  .top-controls input { padding:6px; flex:1; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 <div class="chat-container">
+  <div class="top-controls">
+    <input type="text" id="username" placeholder="Your name" />
+    <input type="text" id="room" placeholder="Room name" />
+    <button onclick="joinRoom()">Join/Create Room</button>
+  </div>
   <div class="messages" id="messages"></div>
   <div class="input-area">
-    <input type="text" id="username" placeholder="Your name" />
-    <input type="text" id="room" placeholder="Room" />
-    <input type="text" id="msg" placeholder="Message" />
+    <input type="text" id="msg" placeholder="Type a message" />
     <button onclick="sendMessage()">Send</button>
   </div>
 </div>
 <script>
-  const firebaseConfig = {
+// ===== Firebase config =====
+const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
     databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
@@ -38,42 +43,41 @@
     storageBucket: "YOUR_PROJECT_ID.appspot.com",
     messagingSenderId: "YOUR_MESSAGING_ID",
     appId: "YOUR_APP_ID"
-  };
+};
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const messagesDiv = document.getElementById('messages');
+let currentRoom = 'General';
+const messagesDiv = document.getElementById('messages');
 
-  function sendMessage() {
-    const user = document.getElementById('username').value.trim() || 'Anon';
-    const room = document.getElementById('room').value.trim() || 'General';
-    const msg = document.getElementById('msg').value.trim();
-    if(!msg) return;
-    db.ref(`chat/${room}`).push({username:user, message:msg, timestamp:Date.now()});
-    document.getElementById('msg').value='';
-  }
-
-  function joinRoom(room) {
-    db.ref(`chat/${room}`).off();
+// ===== Join or create room =====
+function joinRoom(){
+    const roomInput = document.getElementById('room').value.trim();
+    if(roomInput===''){ alert('Enter a room name!'); return; }
+    currentRoom = roomInput;
     messagesDiv.innerHTML = '';
-    db.ref(`chat/${room}`).on('child_added', snapshot => {
-      const data = snapshot.val();
-      const div = document.createElement('div');
-      div.classList.add('message');
-      if(data.username === document.getElementById('username').value.trim()) div.classList.add('you');
-      else div.classList.add('friend');
-      div.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Listen to messages in this room
+    db.ref(`chat/${currentRoom}`).off();
+    db.ref(`chat/${currentRoom}`).on('child_added', snapshot=>{
+        const data = snapshot.val();
+        const div = document.createElement('div');
+        div.classList.add('message');
+        if(data.username===document.getElementById('username').value.trim()) div.classList.add('you');
+        else div.classList.add('friend');
+        div.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
+        messagesDiv.appendChild(div);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
-  }
+}
 
-  document.getElementById('room').addEventListener('change', e => {
-    const room = e.target.value.trim() || 'General';
-    joinRoom(room);
-  });
+// ===== Send message =====
+function sendMessage(){
+    const user = document.getElementById('username').value.trim() || 'Anon';
+    const msg = document.getElementById('msg').value.trim();
+    if(msg===''){ return; }
+    db.ref(`chat/${currentRoom}`).push({username:user, message:msg, timestamp:Date.now()});
+    document.getElementById('msg').value='';
+}
 
-  joinRoom('General');
-</script>
-</body>
-</html>
+// Optional: send message with Enter
