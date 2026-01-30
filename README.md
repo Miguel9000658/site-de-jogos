@@ -36,14 +36,16 @@
 <script>
 // ===== Firebase config =====
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyATZXvVFiObc_e12PZzA0k0qeEjblfOe2Y",
+  authDomain: "littlezap-7ac2d.firebaseapp.com",
+  databaseURL: "https://littlezap-7ac2d.firebaseio.com",
+  projectId: "littlezap-7ac2d",
+  storageBucket: "littlezap-7ac2d.appspot.com",
+  messagingSenderId: "206009524289",
+  appId: "1:206009524289:web:f5dc8325817b0e9ba666c0"
 };
+
+// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -63,21 +65,3 @@ function joinRoom(){
         const data = snapshot.val();
         const div = document.createElement('div');
         div.classList.add('message');
-        if(data.username===document.getElementById('username').value.trim()) div.classList.add('you');
-        else div.classList.add('friend');
-        div.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
-        messagesDiv.appendChild(div);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
-}
-
-// ===== Send message =====
-function sendMessage(){
-    const user = document.getElementById('username').value.trim() || 'Anon';
-    const msg = document.getElementById('msg').value.trim();
-    if(msg===''){ return; }
-    db.ref(`chat/${currentRoom}`).push({username:user, message:msg, timestamp:Date.now()});
-    document.getElementById('msg').value='';
-}
-
-// Optional: send message with Enter
