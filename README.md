@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Geometry Dash Fan-Made</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geometry Dash Lite Fan-Made</title>
   <style>
     :root {
       --bg: #0b0f1a;
-      --panel: #12172a;
       --neon: #5ef2ff;
       --accent: #7cff6b;
       --danger: #ff5e7a;
@@ -15,100 +14,29 @@
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -10%, #1b2250, var(--bg));
-      color: var(--text);
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
+      margin: 0; font-family: system-ui, sans-serif;
+      background: linear-gradient(180deg, #0b0f1a, #090c1f);
+      display: grid; place-items: center; min-height: 100vh; color: var(--text);
     }
-    .app {
-      width: min(1100px, 96vw);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.45);
-      overflow: hidden;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      background: linear-gradient(180deg, rgba(94,242,255,.15), rgba(94,242,255,0));
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .brand { display: flex; gap: 12px; align-items: center; }
-    .logo { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--neon), var(--accent)); box-shadow: 0 0 24px rgba(94,242,255,.6); }
-    .brand h1 { font-size: 1.1rem; margin: 0; letter-spacing: .5px; }
-    .actions button {
-      background: var(--panel);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-    }
-    .actions button.primary {
-      background: linear-gradient(135deg, var(--neon), #7aa2ff);
-      color: #001;
-      border: none;
-      font-weight: 700;
-    }
-    main {
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 16px;
-      padding: 16px;
-    }
-    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
-    .game-wrap { background: var(--panel); border-radius: 14px; border: 1px solid rgba(255,255,255,.08); padding: 12px; }
-    canvas { width: 100%; height: 360px; background: linear-gradient(180deg, #0e1330, #090d1f); border-radius: 10px; display: block; }
-    .hud { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: .9rem; opacity: .9; }
-    .panel { background: var(--panel); border-radius: 14px; border: 1px solid rgba(255,255,255,.08); padding: 14px; }
-    .panel h3 { margin: 0 0 8px; }
-    .kbd { padding: 2px 8px; border-radius: 6px; background: #0a0f26; border: 1px solid rgba(255,255,255,.12); }
-    footer { padding: 10px 16px; opacity: .7; font-size: .8rem; }
-    .color-picker { display: flex; gap: 6px; margin-bottom: 8px; }
-    .color-picker div { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; border: 2px solid rgba(255,255,255,.2); }
+    .game-container { background: #12172a; border-radius: 12px; padding: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    canvas { display: block; background: linear-gradient(180deg, #0e1330, #090d1f); border-radius: 10px; }
+    .hud { display: flex; justify-content: space-between; margin-top: 8px; font-size: 1rem; }
+    .controls { display: flex; gap: 8px; margin-bottom: 8px; }
+    .color { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; border: 2px solid rgba(255,255,255,.2); }
     .selected { border: 2px solid #fff; }
+    button { padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; background: var(--neon); color: #000; font-weight: bold; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="logo"></div>
-        <h1>Geometry Dash Fan-Made</h1>
-      </div>
-      <div class="actions">
-        <button onclick="resetGame()">Reiniciar</button>
-        <button class="primary" onclick="startGame()">Jogar</button>
-      </div>
-    </header>
-
-    <main>
-      <section class="game-wrap">
-        <canvas id="game" width="900" height="360"></canvas>
-        <div class="hud">
-          <div>Pontuação: <strong id="score">0</strong></div>
-          <div>Recorde: <strong id="best">0</strong></div>
-        </div>
-      </section>
-
-      <aside class="panel">
-        <h3>Escolha seu cubo</h3>
-        <div class="color-picker" id="colors"></div>
-        <h3>Como jogar</h3>
-        <p>Pule os obstáculos no ritmo. Um toque = um pulo.</p>
-        <p><span class="kbd">Espaço</span> ou <span class="kbd">Clique</span></p>
-      </aside>
-    </main>
-
-    <footer>
-      Jogo web fan-made inspirado no Geometry Dash Lite. Arte original.
-    </footer>
+  <div class="game-container">
+    <div class="controls" id="colorPicker"></div>
+    <canvas id="game" width="800" height="360"></canvas>
+    <div class="hud">
+      <div>Pontuação: <span id="score">0</span></div>
+      <div>Recorde: <span id="best">0</span></div>
+      <button onclick="resetGame()">Reiniciar</button>
+      <button onclick="startGame()">Jogar</button>
+    </div>
   </div>
 
   <script>
@@ -122,32 +50,35 @@
     let best = Number(localStorage.getItem('best-run')) || 0;
     bestEl.textContent = best;
 
-    const groundY = canvas.height - 48;
-    const player = { x: 80, y: groundY - 24, w: 24, h: 24, vy: 0, jump: -10, color: '#5ef2ff' };
-    let obstacles = [];
-    let speed = 5;
-    let gravity = 0.6;
-    let spawnTimer = 0;
+    const groundY = canvas.height - 40;
+    const gravity = 0.6;
+    const player = { x: 80, y: groundY - 24, w: 24, h: 24, vy: 0, jump: -12, color: '#5ef2ff' };
+    let speed = 4;
 
-    // Mapa estilo Geometry Dash Lite (predefinido)
-    const map = [
-      { x: 400, y: groundY-24, w: 24, h: 24 },
-      { x: 600, y: groundY-48, w: 24, h: 48 },
-      { x: 850, y: groundY-24, w: 24, h: 24 },
-      { x: 1050, y: groundY-72, w: 24, h: 72 }
+    // Obstáculos estilo Geometry Dash Lite (nível fixo)
+    const level = [
+      { x: 400, y: groundY - 24, w: 24, h: 24 },
+      { x: 600, y: groundY - 48, w: 24, h: 48 },
+      { x: 800, y: groundY - 24, w: 24, h: 24 },
+      { x: 1000, y: groundY - 72, w: 24, h: 72 },
+      { x: 1200, y: groundY - 24, w: 24, h: 24 },
+      { x: 1400, y: groundY - 48, w: 24, h: 48 },
     ];
+    let obstacles = level.map(o => ({ ...o }));
 
     function startGame() {
       if (!running) {
         running = true;
-        obstacles = map.map(o => ({...o}));
+        obstacles = level.map(o => ({ ...o }));
+        score = 0; speed = 4;
         requestAnimationFrame(loop);
       }
     }
 
     function resetGame() {
       running = false;
-      score = 0; speed = 5; obstacles = map.map(o => ({...o})); player.y = groundY - player.h; player.vy = 0;
+      score = 0; speed = 4; obstacles = level.map(o => ({ ...o }));
+      player.y = groundY - player.h; player.vy = 0;
       scoreEl.textContent = score;
       draw();
     }
@@ -159,11 +90,12 @@
     function update() {
       player.vy += gravity;
       player.y += player.vy;
-      if (player.y > groundY - player.h) { player.y = groundY - player.h; player.vy = 0; }
+      if (player.y > groundY - player.h) player.y = groundY - player.h, player.vy = 0;
 
       for (const o of obstacles) o.x -= speed;
-      obstacles = obstacles.filter(o => o.x + o.w > -20);
+      if (obstacles[0] && obstacles[0].x + obstacles[0].w < 0) obstacles.shift();
 
+      // Colisão
       for (const o of obstacles) {
         if (collide(player, o)) {
           running = false;
@@ -173,15 +105,14 @@
         }
       }
 
-      score++;
-      speed += 0.0015;
+      score++; speed += 0.0015;
       scoreEl.textContent = score;
     }
 
     function draw() {
       ctx.clearRect(0,0,canvas.width,canvas.height);
       ctx.fillStyle = '#0a0f26';
-      ctx.fillRect(0, groundY, canvas.width, 48);
+      ctx.fillRect(0, groundY, canvas.width, 40);
       ctx.fillStyle = player.color;
       ctx.fillRect(player.x, player.y, player.w, player.h);
       ctx.fillStyle = '#ff5e7a';
@@ -201,20 +132,21 @@
     window.addEventListener('keydown', e => { if (e.code === 'Space') jump(); });
     canvas.addEventListener('mousedown', jump);
 
-    // Personalização de cores
+    // Personalização do cubo
     const colors = ['#5ef2ff','#ff5e7a','#7cff6b','#ffd700','#ff8c00','#ff69b4'];
-    const colorsDiv = document.getElementById('colors');
+    const colorPicker = document.getElementById('colorPicker');
     colors.forEach(c => {
       const div = document.createElement('div');
+      div.classList.add('color');
       div.style.background = c;
       div.addEventListener('click', () => {
         player.color = c;
-        document.querySelectorAll('#colors div').forEach(d => d.classList.remove('selected'));
+        document.querySelectorAll('.color').forEach(d => d.classList.remove('selected'));
         div.classList.add('selected');
       });
-      colorsDiv.appendChild(div);
+      colorPicker.appendChild(div);
     });
-    document.querySelector('#colors div').classList.add('selected');
+    document.querySelector('.color').classList.add('selected');
 
     draw();
   </script>
