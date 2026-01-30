@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat de Sala Online</title>
+<title>Online Classroom Chat</title>
 <style>
   body { margin:0; font-family: Arial, sans-serif; background:#e5ddd5; display:flex; justify-content:center; align-items:center; height:100vh; }
   .chat-container { width: 400px; max-width: 95vw; background:#f0f0f0; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
@@ -24,21 +23,21 @@
 <div class="chat-container">
   <div class="messages" id="messages"></div>
   <div class="input-area">
-    <input type="text" id="username" placeholder="Seu nome" />
-    <input type="text" id="room" placeholder="Sala" />
-    <input type="text" id="msg" placeholder="Mensagem" />
-    <button onclick="sendMessage()">Enviar</button>
+    <input type="text" id="username" placeholder="Your name" />
+    <input type="text" id="room" placeholder="Room" />
+    <input type="text" id="msg" placeholder="Message" />
+    <button onclick="sendMessage()">Send</button>
   </div>
 </div>
 <script>
   const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://SEU_PROJECT_ID.firebaseio.com",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_PROJECT_ID.appspot.com",
-    messagingSenderId: "SUA_MESSAGING_ID",
-    appId: "SEU_APP_ID"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_ID",
+    appId: "YOUR_APP_ID"
   };
 
   const app = firebase.initializeApp(firebaseConfig);
@@ -47,7 +46,7 @@
 
   function sendMessage() {
     const user = document.getElementById('username').value.trim() || 'Anon';
-    const room = document.getElementById('room').value.trim() || 'Geral';
+    const room = document.getElementById('room').value.trim() || 'General';
     const msg = document.getElementById('msg').value.trim();
     if(!msg) return;
     db.ref(`chat/${room}`).push({username:user, message:msg, timestamp:Date.now()});
@@ -69,14 +68,12 @@
     });
   }
 
-  // Mudar de sala ao digitar o nome da sala
   document.getElementById('room').addEventListener('change', e => {
-    const room = e.target.value.trim() || 'Geral';
+    const room = e.target.value.trim() || 'General';
     joinRoom(room);
   });
 
-  // Inicializa na sala padrão 'Geral'
-  joinRoom('Geral');
+  joinRoom('General');
 </script>
 </body>
 </html>
